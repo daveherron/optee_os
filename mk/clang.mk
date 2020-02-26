@@ -23,7 +23,7 @@ endif
 
 AR$(sm)		:= $(ccache-cmd)llvm-ar
 NM$(sm)		:= llvm-nm
-OBJCOPY$(sm)	:= llvm-objcopy
+OBJCOPY$(sm)	:= $(SCRIPTS_DIR)/llvm-objcopy-wrapper
 
 # llvm-objdump:
 # - Does not support mixed 32-bit ARM and Thumb instructions

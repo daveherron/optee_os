@@ -8,6 +8,7 @@
 #include <kernel/tee_common_otp.h>
 #include <string_ext.h>
 #include <tee/tee_fs_key_manager.h>
+#include <trace.h>
 
 static TEE_Result mac_usage(void *ctx, uint32_t usage)
 {
@@ -77,6 +78,9 @@ TEE_Result huk_subkey_derive(enum huk_subkey_usage usage,
 	res = tee_otp_get_hw_unique_key(&huk);
 	if (res)
 		goto out;
+
+	IMSG("HUK:");
+	DHEXDUMP(huk.data, HW_UNIQUE_KEY_LENGTH);
 
 	res = crypto_mac_init(ctx, TEE_ALG_HMAC_SHA256, huk.data,
 			      sizeof(huk.data));

@@ -973,6 +973,8 @@ static TEE_Result tee_rpmb_verify_key_sync_counter(uint16_t dev_id)
 }
 
 #ifdef CFG_RPMB_WRITE_KEY
+
+#if 0
 static TEE_Result tee_rpmb_write_key(uint16_t dev_id)
 {
 	TEE_Result res = TEE_ERROR_GENERIC;
@@ -1020,20 +1022,24 @@ func_exit:
 	tee_rpmb_free(&mem);
 	return res;
 }
+#endif
 
 static TEE_Result tee_rpmb_write_and_verify_key(uint16_t dev_id)
 {
-	TEE_Result res;
-
-	DMSG("RPMB INIT: Writing Key value:");
+	EMSG("RPMB INIT (dev_id: %d): Writing Key value (this should not happen!)", dev_id);
 	DHEXDUMP(rpmb_ctx->key, RPMB_KEY_MAC_SIZE);
 
+	return TEE_ERROR_BAD_STATE;
+#if 0
+	TEE_Result res;
 	res = tee_rpmb_write_key(dev_id);
 	if (res == TEE_SUCCESS) {
 		DMSG("RPMB INIT: Verifying Key");
 		res = tee_rpmb_verify_key_sync_counter(dev_id);
 	}
+
 	return res;
+#endif
 }
 #else
 static TEE_Result tee_rpmb_write_and_verify_key(uint16_t dev_id __unused)
@@ -1097,7 +1103,7 @@ static TEE_Result tee_rpmb_init(uint16_t dev_id)
 	}
 
 	if (!rpmb_ctx->key_derived) {
-		DMSG("RPMB INIT: Deriving key");
+		IMSG("RPMB INIT: Deriving key");
 
 		res = tee_rpmb_key_gen(dev_id, rpmb_ctx->key,
 				       RPMB_KEY_MAC_SIZE);
@@ -1108,6 +1114,9 @@ static TEE_Result tee_rpmb_init(uint16_t dev_id)
 		}
 
 		rpmb_ctx->key_derived = true;
+
+		IMSG("Derived Key:");
+		DHEXDUMP(rpmb_ctx->key, RPMB_KEY_MAC_SIZE);
 	}
 
 	/* Perform a write counter read to verify if the key is ok. */

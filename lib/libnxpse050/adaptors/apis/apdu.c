@@ -96,7 +96,7 @@ sss_status_t se050_key_store_set_rsa_key_bin(sss_se05x_key_store_t *store,
 					     size_t key_bit_len)
 {
 	SE05x_RSAKeyFormat_t rsa_format = kSE05x_RSAKeyFormat_RAW;
-	SE05x_TransientType_t type = kSE05x_TransientType_Transient;
+	SE05x_INS_t type = kSE05x_INS_TRANSIENT;
 	Se05xSession_t *s_ctx = NULL;
 	uint32_t key_type = 0;
 	Se05xPolicy_t policy = {
@@ -111,7 +111,7 @@ sss_status_t se050_key_store_set_rsa_key_bin(sss_se05x_key_store_t *store,
 	s_ctx = &store->session->s_ctx;
 	key_type = k_object->objectType;
 	if (k_object->isPersistant)
-		type = kSE05x_TransientType_Persistent;
+		type = kSE05x_INS_NA;
 
 	switch (k_object->cipherType) {
 	case kSSS_CipherType_RSA:
@@ -149,7 +149,7 @@ sss_status_t se050_key_store_set_rsa_key_bin(sss_se05x_key_store_t *store,
 				       kSE05x_KeyPart_Public,
 				       rsa_format);
 	if (status != SM_OK) {
-		EMSG("keybitlen %ld, e_len %ld", key_bit_len, key_pub->e_len);
+		EMSG("keybitlen %ld, e_len %ld, status = 0x%x", key_bit_len, key_pub->e_len, status);
 		ret = kStatus_SSS_Fail;
 		goto exit;
 	}

@@ -565,7 +565,7 @@ sss_status_t se050_key_store_set_ecc_key_bin(sss_se05x_key_store_t *store,
 					     struct ecc_keypair_bin *key_pair,
 					     struct ecc_public_key_bin *key_pub)
 {
-	SE05x_TransientType_t type = kSE05x_TransientType_Persistent;
+	SE05x_INS_t type = kSE05x_INS_TRANSIENT;
 	size_t public_keylen = 0;
 	uint8_t buffer[256] = { 0x04 }; /* tag */
 	uint8_t *public_key = buffer + 1;
@@ -581,8 +581,8 @@ sss_status_t se050_key_store_set_ecc_key_bin(sss_se05x_key_store_t *store,
 
 	s_ctx = &store->session->s_ctx;
 	k_object->curve_id = key_pair ? key_pair->curve : key_pub->curve;
-	type = k_object->isPersistant ? kSE05x_TransientType_Persistent :
-				  kSE05x_TransientType_Transient;
+	if (k_object->isPersistant)
+		type = kSE05x_INS_NA;
 
 	if (k_object->objectType != kSSS_KeyPart_Pair)
 		goto label_public;
